@@ -1,0 +1,5 @@
+msdm.dat
+*.cpio
+kernel/
+.DS_Store
+Thumbs.db
