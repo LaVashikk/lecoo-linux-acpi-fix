@@ -1,5 +1,7 @@
 msdm.dat
 *.cpio
+*.asm
+*.aml
 kernel/
 .DS_Store
 Thumbs.db
