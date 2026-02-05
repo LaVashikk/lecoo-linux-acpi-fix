@@ -10,7 +10,7 @@
 
 ## Подготовкаtodo
 
-1. Скачайте файл **`acpi_override`** из раздела [Releases]([todo](https://github.com/LaVashikk/lecoo-linux-acpi-fix/releases)).
+1. Скачайте файл **`acpi_override`** из раздела [Releases](https://github.com/LaVashikk/lecoo-linux-acpi-fix/releases).
 2. Скопируйте его в корень вашего загрузочного раздела (обычно `/boot`).
 
 ```bash
