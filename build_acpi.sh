@@ -30,16 +30,37 @@ if [ ! -d "$PATCH_DIR" ]; then
 fi
 cd "$PATCH_DIR"
 
-if [ ! -f "dsdt.dsl" ]; then
-    error "File 'dsdt.dsl' not found in the current directory!"
-fi
-
-log "Compiling dsdt.dsl..."
-iasl -ve -sa dsdt.dsl || error "Compilation failed. Check the errors above."
+# Clean up previous kernel build dir within patched to avoid duplicates/mess
+rm -rf kernel
 
 log "Preparing kernel directory structure..."
 mkdir -p kernel/firmware/acpi
-cp dsdt.aml kernel/firmware/acpi/
+
+# Check if any .dsl files exist
+count_dsl=$(ls *.dsl 2>/dev/null | wc -l)
+if [ "$count_dsl" -eq 0 ]; then
+    error "No .dsl files found in '$PATCH_DIR'!"
+fi
+
+# Loop through all .dsl files in the current directory (non-recursive)
+for dsl_file in *.dsl; do
+    log "Found table: $dsl_file. Compiling..."
+    
+    # Compile the file
+    # iasl creates the .aml file in the same directory by default
+    iasl -ve -sa "$dsl_file" || error "Compilation of $dsl_file failed. Check the errors above."
+    
+    # Determine the expected AML filename (replace extension)
+    aml_file="${dsl_file%.dsl}.aml"
+    
+    # Move/Copy the resulting AML to the structure
+    if [ -f "$aml_file" ]; then
+        cp "$aml_file" kernel/firmware/acpi/
+        log "Processed and included: $aml_file"
+    else
+        error "Compiler finished, but $aml_file was not created."
+    fi
+done
 
 log "Packing into acpi_override.cpio..."
 find kernel | cpio -H newc --create > acpi_override.cpio
