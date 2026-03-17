@@ -9,37 +9,17 @@
  *
  * Original Table Header:
  *     Signature        "DSDT"
- *     Length           0x0000D0A2 (53410)
+ *     Length           0x0000CBEC (52204)
  *     Revision         0x02
- *     Checksum         0xFF
+ *     Checksum         0xA8
  *     OEM ID           "ALASKA"
  *     OEM Table ID     "A M I "
- *     OEM Revision     0x01072009 (17244169)
+ *     OEM Revision     0x0107200A (17244170)
  *     Compiler ID      "INTL"
- *     Compiler Version 0x20220331 (539099953)
+ *     Compiler Version 0x20250404 (539296772)
  */
-DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
+DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
 {
-    /*
-     * iASL Warning: There were 21 external control methods found during
-     * disassembly, but only 20 were resolved (1 unresolved). Additional
-     * ACPI tables may be required to properly disassemble the code. This
-     * resulting disassembler output file may not compile because the
-     * disassembler did not know how many arguments to assign to the
-     * unresolved methods. Note: SSDTs can be dynamically loaded at
-     * runtime and may or may not be available via the host OS.
-     *
-     * In addition, the -fe option can be used to specify a file containing
-     * control method external declarations with the associated method
-     * argument counts. Each line of the file must be of the form:
-     *     External (<method pathname>, MethodObj, <argument count>)
-     * Invocation:
-     *     iasl -fe refs.txt -d dsdt.aml
-     *
-     * The following methods were unresolved and many not compile properly
-     * because the disassembler had to guess at the number of arguments
-     * required for each:
-     */
     External (_GPE, DeviceObj)
     External (_SB_.ALIB, MethodObj)    // 2 Arguments
     External (_SB_.APTS, MethodObj)    // 1 Arguments
@@ -62,7 +42,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
     External (_SB_.PRME, IntObj)
     External (_SB_.WMI_, UnknownObj)
     External (_SB_.WMI_.EVNT, UnknownObj)
-    External (_SB_.WMI_.QEKE, MethodObj)    // Warning: Unknown method, guessing 0 arguments
+    External (_SB_.WMI_.QEKE, MethodObj)    // 0 Arguments
     External (AFN4, MethodObj)    // 1 Arguments
     External (ALIB, MethodObj)    // 2 Arguments
     External (CRBI, UnknownObj)
@@ -521,7 +501,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
     Name (SS3, Zero)
     Name (SS4, One)
     Name (IOST, 0xFFFF)
-    Name (TOPM, 0x00000000)
+    Name (TOPM, Zero)
     Name (ROMS, 0xFFE00000)
     Name (VGAF, One)
     OperationRegion (GNVS, SystemMemory, 0x97466D18, 0x0D)
@@ -2284,9 +2264,9 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             }
 
             Name (CPRB, One)
-            Name (LVGA, 0x01)
+            Name (LVGA, One)
             Name (STAV, 0x0F)
-            Name (BRB, 0x0000)
+            Name (BRB, Zero)
             Name (BRL, 0x0100)
             Name (IOB, 0x1000)
             Name (IOL, 0xF000)
@@ -2923,6 +2903,11 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                 Device (D011)
                 {
                     Name (_ADR, 0xFF)  // _ADR: Address
+                }
+
+                Device (WWAN)
+                {
+                    Name (_ADR, Zero)
                 }
             }
 
@@ -3770,7 +3755,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                 Name (_ADR, 0x00010001)  // _ADR: Address
                 Method (_PRW, 0, NotSerialized)  // _PRW: Power Resources for Wake
                 {
-                    Return (GPRW (0x16, 0x04))
+                    Return (GPRW (0x16, 0x00))
                 }
 
                 Method (_PRT, 0, NotSerialized)  // _PRT: PCI Routing Table
@@ -3840,7 +3825,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
     })
     Method (_PTS, 1, NotSerialized)  // _PTS: Prepare To Sleep
     {
-        If ((Arg0 < 0x05))
+        If ((Arg0 < 0x03))
         {
             \_SB.TPM.TPTS (Arg0)
             SPTS (Arg0)
@@ -7257,6 +7242,9 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                 Offset (0x32), 
                 TLID,   8, 
                 TLIE,   8, 
+                Offset (0x34),
+                SCEN,   8,
+                SCUC,   8,
                 Offset (0x38), 
                 RTSC,   8, 
                 Offset (0x40), 
@@ -9016,7 +9004,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMAA, 3, Serialized)
             {
                 Debug = "WMI WMAA() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateWordField (Local0, 0x02, ALID)
                 CreateField (Local0, 0x20, 0x3F, RES3)
@@ -9085,7 +9073,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMAC, 3, Serialized)
             {
                 Debug = "WMI WMAC() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateWordField (Local0, 0x02, ALID)
                 CreateField (Local0, 0x20, 0x3F, RES3)
@@ -9116,7 +9104,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMAD, 3, Serialized)
             {
                 Debug = "WMI WMAD() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateByteField (Local0, 0x02, ECVN)
                 CreateByteField (Local0, 0x03, ECVM)
@@ -9178,7 +9166,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMAE, 3, Serialized)
             {
                 Debug = "WMI WMAE() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateByteField (Local0, 0x02, ECVN)
                 CreateByteField (Local0, 0x03, ECVM)
@@ -9299,7 +9287,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMAF, 3, Serialized)
             {
                 Debug = "WMI WMAF() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateByteField (Local0, 0x02, ECVN)
                 CreateByteField (Local0, 0x03, ECVM)
@@ -9388,7 +9376,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMBA, 3, Serialized)
             {
                 Debug = "WMI WMBA() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateByteField (Local0, 0x02, ECVN)
                 CreateByteField (Local0, 0x03, ECVM)
@@ -9412,7 +9400,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMBB, 3, Serialized)
             {
                 Debug = "WMI WMBB() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateWordField (Local0, 0x02, ALID)
                 CreateField (Local0, 0x20, 0x3F, RES3)
@@ -9464,7 +9452,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMBC, 3, Serialized)
             {
                 Debug = "WMI WMBC() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateWordField (Local0, 0x02, SCEN)
                 CreateWordField (Local0, 0x03, SCPC)
@@ -9529,7 +9517,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMBD, 3, Serialized)
             {
                 Debug = "WMI WMBD() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateByteField (Local0, 0x02, ECVN)
                 CreateByteField (Local0, 0x03, ECVM)
@@ -9582,7 +9570,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMBE, 3, Serialized)
             {
                 Debug = "WMI WMBE() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateWordField (Local0, 0x02, ALID)
                 CreateField (Local0, 0x20, 0x3F, RES3)
@@ -9634,7 +9622,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Method (WMBF, 3, Serialized)
             {
                 Debug = "WMI WMBB() Method in Application ---"
-                Local0 = Buffer (0x08){}
+                Local0 = Buffer (0x10){}
                 CreateWordField (Local0, Zero, RTNC)
                 CreateByteField (Local0, 0x02, ECVN)
                 CreateByteField (Local0, 0x03, ECVM)
@@ -11860,6 +11848,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
     Scope (_SB.PCI0.GPP0)
     {
         Name (_S0W, 0x04)  // _S0W: S0 Device Wake State
+        Name (D0DE, Zero)
         Method (DEON, 0, NotSerialized)
         {
             \_SB.ALIB (0x13, 0x09)
