@@ -1,6 +1,6 @@
 /*
  * Intel ACPI Component Architecture
- * AML/ASL+ Disassembler version 20250404 (64-bit version)
+ * AML/ASL+ Disassembler version 20251212 (64-bit version)
  * Copyright (c) 2000 - 2025 Intel Corporation
  * 
  * Disassembling to symbolic ASL+ operators
@@ -9,19 +9,45 @@
  *
  * Original Table Header:
  *     Signature        "DSDT"
- *     Length           0x0000CBEC (52204)
+ *     Length           0x0000D0A2 (53410)
  *     Revision         0x02
- *     Checksum         0xA8
+ *     Checksum         0x57
  *     OEM ID           "ALASKA"
  *     OEM Table ID     "A M I "
- *     OEM Revision     0x0107200A (17244170)
+ *     OEM Revision     0x01072009 (17244169)
  *     Compiler ID      "INTL"
- *     Compiler Version 0x20250404 (539296772)
+ *     Compiler Version 0x20220331 (539099953)
  */
-DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
+DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x01072009)
 {
-    External (_GPE, DeviceObj)
-    External (_SB_.ALIB, MethodObj)    // 2 Arguments
+    /*
+     * iASL Warning: There were 21 external control methods found during
+     * disassembly, but only 19 were resolved (2 unresolved). Additional
+     * ACPI tables may be required to properly disassemble the code. This
+     * resulting disassembler output file may not compile because the
+     * disassembler did not know how many arguments to assign to the
+     * unresolved methods. Note: SSDTs can be dynamically loaded at
+     * runtime and may or may not be available via the host OS.
+     *
+     * To specify the tables needed to resolve external control method
+     * references, the -e option can be used to specify the filenames.
+     * Example iASL invocations:
+     *     iasl -e ssdt1.aml ssdt2.aml ssdt3.aml -d dsdt.aml
+     *     iasl -e dsdt.aml ssdt2.aml -d ssdt1.aml
+     *     iasl -e ssdt*.aml -d dsdt.aml
+     *
+     * In addition, the -fe option can be used to specify a file containing
+     * control method external declarations with the associated method
+     * argument counts. Each line of the file must be of the form:
+     *     External (<method pathname>, MethodObj, <argument count>)
+     * Invocation:
+     *     iasl -fe refs.txt -d dsdt.aml
+     *
+     * The following methods were unresolved and many not compile properly
+     * because the disassembler had to guess at the number of arguments
+     * required for each:
+     */
+    External (_SB_.ALIB, MethodObj)    // Warning: Unknown method, guessing 2 arguments
     External (_SB_.APTS, MethodObj)    // 1 Arguments
     External (_SB_.AWAK, MethodObj)    // 1 Arguments
     External (_SB_.PCI0.GP17.VGA_.AFN7, MethodObj)    // 1 Arguments
@@ -42,8 +68,9 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
     External (_SB_.PRME, IntObj)
     External (_SB_.WMI_, UnknownObj)
     External (_SB_.WMI_.EVNT, UnknownObj)
-    External (_SB_.WMI_.QEKE, MethodObj)    // 0 Arguments
+    External (_SB_.WMI_.QEKE, MethodObj)    // Warning: Unknown method, guessing 0 arguments
     External (AFN4, MethodObj)    // 1 Arguments
+    External (ALIB, MethodObj)    // 2 Arguments
     External (CRBI, UnknownObj)
     External (D0DE, UnknownObj)
     External (M000, MethodObj)    // 1 Arguments
@@ -239,8 +266,8 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
     Name (TPCS, 0x1000)
     Name (TPMM, 0xFED40000)
     Name (FTPM, 0xFFFFFFFF)
-    Name (PPIM, 0x97479F18)
-    Name (PPIL, 0x1C)
+    Name (PPIM, 0xFFFF0000)
+    Name (PPIL, 0xF0)
     Name (TPMF, Zero)
     Name (PPIV, Zero)
     Name (AMDT, 0xFF)
@@ -500,10 +527,10 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
     Name (SS3, Zero)
     Name (SS4, One)
     Name (IOST, 0xFFFF)
-    Name (TOPM, Zero)
+    Name (TOPM, 0x00000000)
     Name (ROMS, 0xFFE00000)
     Name (VGAF, One)
-    OperationRegion (GNVS, SystemMemory, 0x97466D18, 0x0D)
+    OperationRegion (GNVS, SystemMemory, 0x971F2F18, 0x0D)
     Field (GNVS, AnyAcc, Lock, Preserve)
     {
         CNSB,   8, 
@@ -696,7 +723,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
     {
     }
 
-    OperationRegion (OGNV, SystemMemory, 0x97479698, 0x0334)
+    OperationRegion (OGNV, SystemMemory, 0x971F2698, 0x0334)
     Field (OGNV, AnyAcc, Lock, Preserve)
     {
         WOLV,   8, 
@@ -2263,9 +2290,9 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             }
 
             Name (CPRB, One)
-            Name (LVGA, One)
+            Name (LVGA, 0x01)
             Name (STAV, 0x0F)
-            Name (BRB, Zero)
+            Name (BRB, 0x0000)
             Name (BRL, 0x0100)
             Name (IOB, 0x1000)
             Name (IOL, 0xF000)
@@ -2274,7 +2301,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Name (MAB, 0x0000000860000000)
             Name (MAL, 0x00000077A0000000)
             Name (MAM, 0x0000007FFFFFFFFF)
-            Name (NRSB, 0x97467000)
+            Name (NRSB, 0x971E0000)
             OperationRegion (NRSV, SystemMemory, NRSB, 0x1000)
             Field (NRSV, AnyAcc, NoLock, Preserve)
             {
@@ -2572,7 +2599,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                         Else
                         {
                             MIN3 = MBB /* \_SB_.PCI0.MBB_ */
-                            LEN3 = (NBTP - MBB) /* \_SB_.PCI0.MBB_ */
+                            LEN3 = (NBTP - MBB)
                             Local0 = LEN3 /* \_SB_.PCI0._CRS.LEN3 */
                             MAX3 = (MIN3 + Local0--)
                             If (((MBL - LEN3) < 0x00200000))
@@ -2584,9 +2611,9 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                             Else
                             {
                                 MIN7 = 0xFEE00000
-                                Local0 = (0xFEE00000 - NBTP) /* \NBTP */
+                                Local0 = (0xFEE00000 - NBTP)
                                 LEN7 = (MBL - Local0)
-                                LEN7 -= LEN3 /* \_SB_.PCI0._CRS.LEN3 */
+                                LEN7 = (LEN7 - LEN3)
                                 Local0 = LEN7 /* \_SB_.PCI0._CRS.LEN7 */
                                 MAX7 = (MIN7 + Local0--)
                             }
@@ -2642,15 +2669,15 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                     CreateDWordField (CRS2, \_SB.PCI0._Y0E._MAX, MAX5)  // _MAX: Maximum Base Address
                     CreateDWordField (CRS2, \_SB.PCI0._Y0E._LEN, LEN5)  // _LEN: Length
                     MIN5 = MBB /* \_SB_.PCI0.MBB_ */
-                    LEN5 = (NBTP - MBB) /* \_SB_.PCI0.MBB_ */
+                    LEN5 = (NBTP - MBB)
                     Local1 = LEN5 /* \_SB_.PCI0._CRS.LEN5 */
                     MAX5 = (MIN5 + Local1--)
                     CreateDWordField (CRS2, \_SB.PCI0._Y0F._MIN, MIN6)  // _MIN: Minimum Base Address
                     CreateDWordField (CRS2, \_SB.PCI0._Y0F._MAX, MAX6)  // _MAX: Maximum Base Address
                     CreateDWordField (CRS2, \_SB.PCI0._Y0F._LEN, LEN6)  // _LEN: Length
                     MIN6 = (NBTP + NBTS) /* \NBTS */
-                    LEN6 = (MBL - NBTS) /* \NBTS */
-                    LEN6 -= LEN5 /* \_SB_.PCI0._CRS.LEN5 */
+                    LEN6 = (MBL - NBTS)
+                    LEN6 = (LEN6 - LEN5)
                     Local0 = LEN6 /* \_SB_.PCI0._CRS.LEN6 */
                     MAX6 = (MIN6 + Local0--)
                     If (MAL)
@@ -3796,7 +3823,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
         Zero, 
         Zero
     })
-    Name (_S3, Package (0x04)  // _S3_: S3 System State
+    Name (XS3, Package (0x04)
     {
         0x03, 
         Zero, 
@@ -3819,7 +3846,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
     })
     Method (_PTS, 1, NotSerialized)  // _PTS: Prepare To Sleep
     {
-        If ((Arg0 < 0x05))
+        If (Arg0)
         {
             \_SB.TPM.TPTS (Arg0)
             SPTS (Arg0)
@@ -7058,7 +7085,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
 
                 }
             }
-            ElseIf ((Arg0 == ToUUID ("376054ed-cc13-4675-901c-4756d7f2d45d") /* Unknown UUID */))
+            ElseIf ((Arg0 == ToUUID ("376054ed-cc13-4675-901c-4756d7f2d45d") /* TPM Memory Clear */))
             {
                 Switch (ToInteger (Arg2))
                 {
@@ -7085,12 +7112,12 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                 }
             }
 
-            If ((Arg0 == ToUUID ("cf8e16a5-c1e8-4e25-b712-4f54a96702c8") /* Unknown UUID */))
+            If ((Arg0 == ToUUID ("cf8e16a5-c1e8-4e25-b712-4f54a96702c8") /* TPM Hardware Information */))
             {
                 Return (CRYF (Arg1, Arg2, Arg3))
             }
 
-            If ((Arg0 == ToUUID ("6bbf6cab-5463-4714-b7cd-f0203c0368d4") /* Unknown UUID */))
+            If ((Arg0 == ToUUID ("6bbf6cab-5463-4714-b7cd-f0203c0368d4") /* TPM Start Method */))
             {
                 Return (STRT (Arg1, Arg2, Arg3))
             }
@@ -8125,56 +8152,56 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
 
             Method (_Q20, 0, NotSerialized)  // _Qxx: EC Query, xx=0x00-0xFF
             {
-                ^^^^WMI.EVNT = One
-                Notify (WMI, 0xD0) // Hardware-Specific
+                \_SB.WMI.EVNT = One
+                Notify (\_SB.WMI, 0xD0) // Hardware-Specific
             }
 
             Method (_Q21, 0, NotSerialized)  // _Qxx: EC Query, xx=0x00-0xFF
             {
-                ^^^^WMI.EVNT = 0x03
-                Notify (WMI, 0xD0) // Hardware-Specific
+                \_SB.WMI.EVNT = 0x03
+                Notify (\_SB.WMI, 0xD0) // Hardware-Specific
             }
 
             Method (_Q22, 0, NotSerialized)  // _Qxx: EC Query, xx=0x00-0xFF
             {
-                ^^^^WMI.EVNT = 0x04
-                Notify (WMI, 0xD0) // Hardware-Specific
+                \_SB.WMI.EVNT = 0x04
+                Notify (\_SB.WMI, 0xD0) // Hardware-Specific
             }
 
             Method (_Q23, 0, NotSerialized)  // _Qxx: EC Query, xx=0x00-0xFF
             {
-                ^^^^WMI.EVNT = 0x07
-                Notify (WMI, 0xD0) // Hardware-Specific
+                \_SB.WMI.EVNT = 0x07
+                Notify (\_SB.WMI, 0xD0) // Hardware-Specific
             }
 
             Method (_Q24, 0, NotSerialized)  // _Qxx: EC Query, xx=0x00-0xFF
             {
-                ^^^^WMI.EVNT = 0x06
-                Notify (WMI, 0xD0) // Hardware-Specific
+                \_SB.WMI.EVNT = 0x06
+                Notify (\_SB.WMI, 0xD0) // Hardware-Specific
             }
 
             Method (_Q25, 0, NotSerialized)  // _Qxx: EC Query, xx=0x00-0xFF
             {
-                ^^^^WMI.QEKE ()
-                Notify (WMI, 0xD0) // Hardware-Specific
+                \_SB.WMI.QEKE ()
+                Notify (\_SB.WMI, 0xD0) // Hardware-Specific
             }
 
             Method (_Q26, 0, NotSerialized)  // _Qxx: EC Query, xx=0x00-0xFF
             {
-                ^^^^WMI.QEKE ()
-                Notify (WMI, 0xD0) // Hardware-Specific
+                \_SB.WMI.QEKE ()
+                Notify (\_SB.WMI, 0xD0) // Hardware-Specific
             }
 
             Method (_Q27, 0, NotSerialized)  // _Qxx: EC Query, xx=0x00-0xFF
             {
-                ^^^^WMI.EVNT = 0x08
-                Notify (WMI, 0xD0) // Hardware-Specific
+                \_SB.WMI.EVNT = 0x08
+                Notify (\_SB.WMI, 0xD0) // Hardware-Specific
             }
 
             Method (_Q28, 0, NotSerialized)  // _Qxx: EC Query, xx=0x00-0xFF
             {
-                ^^^^WMI.EVNT = 0x09
-                Notify (WMI, 0xD0) // Hardware-Specific
+                \_SB.WMI.EVNT = 0x09
+                Notify (\_SB.WMI, 0xD0) // Hardware-Specific
             }
 
             Name (PSEV, Package (0x02)
@@ -8378,12 +8405,12 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                 BPK1 [0x02] = ((B1DC * B1FV) / 0x03E8)
                 If (B1FC)
                 {
-                    BPK1 [0x05] = (((B1FC * B1FV) / 0x03E8) / 
-                        0x0A)
-                    BPK1 [0x06] = (((B1FC * B1FV) / 0x03E8) / 
-                        0x19)
-                    BPK1 [0x07] = (((B1DC * B1FV) / 0x03E8) / 
-                        0x64)
+                    BPK1 [0x05] = (((B1FC * B1FV) / 0x03E8
+                        ) / 0x0A)
+                    BPK1 [0x06] = (((B1FC * B1FV) / 0x03E8
+                        ) / 0x19)
+                    BPK1 [0x07] = (((B1DC * B1FV) / 0x03E8
+                        ) / 0x64)
                 }
 
                 Return (BPK1) /* \_SB_.PCI0.SBRG.H_EC.BAT0._BIF.BPK1 */
@@ -8401,19 +8428,19 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                 PKG1 [Zero] = (B1ST & 0x07)
                 If ((B1ST & One))
                 {
-                    Local0 = (B1CR * B1VT) /* \_SB_.PCI0.SBRG.H_EC.B1VT */
-                    Local0 /= 0x03E8
+                    Local0 = (B1CR * B1VT)
+                    Local0 = (Local0 / 0x03E8)
                     PKG1 [One] = Local0
                 }
                 Else
                 {
-                    Local0 = (B1CR * B1VT) /* \_SB_.PCI0.SBRG.H_EC.B1VT */
-                    Local0 /= 0x03E8
+                    Local0 = (B1CR * B1VT)
+                    Local0 = (Local0 / 0x03E8)
                     PKG1 [One] = Local0
                 }
 
-                Local1 = (B1DC * BPCN) /* \_SB_.PCI0.SBRG.H_EC.BPCN */
-                Local1 /= 0x64
+                Local1 = (B1DC * BPCN)
+                Local1 = (Local1 / 0x64)
                 Local2 = ((Local1 * B1FV) / 0x03E8)
                 PKG1 [0x02] = Local2
                 PKG1 [0x03] = B1VT /* \_SB_.PCI0.SBRG.H_EC.B1VT */
@@ -11841,14 +11868,14 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
         Name (_S0W, 0x04)  // _S0W: S0 Device Wake State
         Method (DEON, 0, NotSerialized)
         {
-            ALIB (0x13, 0x09)
+            \_SB.ALIB (0x13, 0x09)
             Sleep (One)
             Local1 = Zero
             Local2 = 0x2775
             While ((((Local1 & 0x28) != 0x20) && (Local2 > Zero)))
             {
                 Local1 = M017 (Zero, One, One, 0x6B, Zero, 0x08)
-                Local2 -= One
+                Local2 = (Local2 - One)
                 Stall (0x63)
             }
 
@@ -11861,7 +11888,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
             Sleep (0x10)
             Local2 = M017 (Zero, One, One, 0x70, Zero, 0x10)
             M018 (Zero, One, One, 0x70, Zero, 0x10, (Local2 & 0xEFFF))
-            ALIB (0x12, 0x09)
+            \_SB.ALIB (0x12, 0x09)
             M018 (Zero, One, One, 0x70, Zero, 0x10, Local2)
         }
 
@@ -12011,7 +12038,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107200A)
                             Local0 = ToInteger (Arg3)
                             If ((Local0 <= 0x2710))
                             {
-                                ^^^PB2.M434 = 0x2710
+                                \_SB.PCI0.PB2.M434 = 0x2710
                             }
                             Else
                             {
