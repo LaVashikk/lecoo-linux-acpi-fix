@@ -10,17 +10,17 @@
 
 
 ### ⚠️ Важно
-Файл `acpi_override` должен загружаться **ПЕРЕД** основным образом initramfs.
+Файл `acpi_override.cpio` должен загружаться **ПЕРЕД** основным образом initramfs.
 - **Secure Boot:** Этот патч **не работает** "из коробки", если включен Secure Boot. Загрузка кастомных таблиц ACPI с безопасной загрузкой — дело запарное, требует ручной подписи и возни с собственными ключами (тут уж разбирайтесь сами). Проще и надежнее всего — просто отключить Secure Boot в BIOS.
 
 
 ## Подготовка
 
-1. Скачайте файл **`acpi_override`** из раздела [Releases](https://github.com/LaVashikk/lecoo-linux-acpi-fix/releases).
+1. Скачайте файл **`acpi_override.cpio`** из раздела [Releases](https://github.com/LaVashikk/lecoo-linux-acpi-fix/releases).
 2. Скопируйте его в корень вашего загрузочного раздела (обычно `/boot`).
 
 ```bash
-sudo cp acpi_override /boot/
+sudo cp acpi_override.cpio /boot/
 ```
 Далее выберите инструкцию для вашего загрузчика.
 
@@ -32,12 +32,12 @@ sudo cp acpi_override /boot/
 sudo nano /boot/loader/entries/arch.conf
 ```
 
-3. Добавьте строку `initrd /acpi_override` **ПЕРЕД** строкой основного initramfs.
+3. Добавьте строку `initrd /acpi_override.cpio` **ПЕРЕД** строкой основного initramfs.
 **Пример того, как должно получиться:**
 ```text
 title   Arch Linux
 linux   /vmlinuz-linux
-initrd  /acpi_override       # <-- СНАЧАЛА override!!
+initrd  /acpi_override.cpio       # <-- СНАЧАЛА override!!
 initrd  /initramfs-linux.img
 options root=UUID=... rw
 
@@ -59,10 +59,10 @@ sudo nano /etc/default/grub
 * **Если её нет:** Добавьте строку в конец файла:
 
 ```bash
-GRUB_EARLY_INITRD_LINUX_CUSTOM="acpi_override"
+GRUB_EARLY_INITRD_LINUX_CUSTOM="acpi_override.cpio"
 ```
 
-*(Примечание: Путь указывается относительно корня /boot. Если не сработает, попробуйте `"/boot/acpi_override"`).*
+*(Примечание: Путь указывается относительно корня /boot. Если не сработает, попробуйте `"/boot/acpi_override.cpio"`).*
 3. Обновите конфигурацию GRUB:
 * **Arch Linux:**
 ```bash
