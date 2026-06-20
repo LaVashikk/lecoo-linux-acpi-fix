@@ -191,6 +191,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
     External (MWAK, MethodObj)    // 1 Arguments
     External (PRME, IntObj)
 
+    Name (SLPF, Zero) // Sleep Flag (0 - awaking, 1 - sleeping)
     Name (PEBL, 0x10000000)
     Name (NBTS, 0x5000)
     Name (CPVD, One)
@@ -498,13 +499,13 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
 
     Name (SS1, Zero)
     Name (SS2, Zero)
-    Name (SS3, Zero)
+    Name (SS3, One)
     Name (SS4, One)
     Name (IOST, 0xFFFF)
     Name (TOPM, Zero)
     Name (ROMS, 0xFFE00000)
     Name (VGAF, One)
-    OperationRegion (GNVS, SystemMemory, 0x97466D18, 0x0D)
+    OperationRegion (GNVS, SystemMemory, 0x971F2F18, 0x0D)
     Field (GNVS, AnyAcc, Lock, Preserve)
     {
         CNSB,   8, 
@@ -3825,7 +3826,11 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
     })
     Method (_PTS, 1, NotSerialized)  // _PTS: Prepare To Sleep
     {
-        If ((Arg0 < 0x03))
+        If ((Arg0 == Zero)) { // todo: use only for s2idle? idk for now, actually
+            Store (One, \SLPF)
+        }
+
+        If ((Arg0 < 0x05))
         {
             \_SB.TPM.TPTS (Arg0)
             SPTS (Arg0)
@@ -3836,6 +3841,8 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
 
     Method (_WAK, 1, NotSerialized)  // _WAK: Wake
     {
+        Debug = "*** not DBG_S2I: waking ***"
+        Store (Zero, \SLPF) 
         DBG8 = (Arg0 << 0x04)
         \_SB.PCI0.NWAK (Arg0)
         If (((Arg0 == 0x03) || (Arg0 == 0x04)))
@@ -6679,7 +6686,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
                 0xFED40000,         // Address Base
                 0x00005000,         // Address Length
                 )
-            GpioInt (Level, ActiveLow, ExclusiveAndWake, PullNone, 0x0000,
+            GpioInt (Level, ActiveLow, Exclusive, PullNone, 0x0000,
                 "\\_SB.GPIO", 0x00, ResourceConsumer, _Y2A,
                 )
                 {   // Pin list
@@ -7064,7 +7071,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
 
                 }
             }
-            ElseIf ((Arg0 == ToUUID ("376054ed-cc13-4675-901c-4756d7f2d45d") /* Unknown UUID */))
+            ElseIf ((Arg0 == ToUUID ("376054ed-cc13-4675-901c-4756d7f2d45d") /* TPM Memory Clear */))
             {
                 Switch (ToInteger (Arg2))
                 {
@@ -7091,12 +7098,12 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
                 }
             }
 
-            If ((Arg0 == ToUUID ("cf8e16a5-c1e8-4e25-b712-4f54a96702c8") /* Unknown UUID */))
+            If ((Arg0 == ToUUID ("cf8e16a5-c1e8-4e25-b712-4f54a96702c8") /* TPM Hardware Information */))
             {
                 Return (CRYF (Arg1, Arg2, Arg3))
             }
 
-            If ((Arg0 == ToUUID ("6bbf6cab-5463-4714-b7cd-f0203c0368d4") /* Unknown UUID */))
+            If ((Arg0 == ToUUID ("6bbf6cab-5463-4714-b7cd-f0203c0368d4") /* TPM Start Method */))
             {
                 Return (STRT (Arg1, Arg2, Arg3))
             }
@@ -7242,9 +7249,9 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
                 Offset (0x32), 
                 TLID,   8, 
                 TLIE,   8, 
-                Offset (0x34),
-                SCEN,   8,
-                SCUC,   8,
+                // Offset (0x34),
+                // SCEN,   8,
+                // SCUC,   8,
                 Offset (0x38), 
                 RTSC,   8, 
                 Offset (0x40), 
@@ -11659,7 +11666,7 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
                         AddressingMode7Bit, "\\_SB.I2CA",
                         0x00, ResourceConsumer, , Exclusive,
                         )
-                    GpioInt (Level, ActiveLow, ExclusiveAndWake, PullNone, 0x0000,
+                    GpioInt (Level, ActiveLow, Exclusive, PullNone, 0x0000,
                         "\\_SB.GPIO", 0x00, ResourceConsumer, ,
                         )
                         {   // Pin list
