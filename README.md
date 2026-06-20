@@ -9,6 +9,7 @@ This patch addresses the following issues:
 - Fixes **buffer overflow issues** for WMI methods.
 - Resolves "ACPI ...device not found" errors during system boot.
 - Fixes the "instant wake" issue for the S4 state (hibernation).
+- Significantly improves the stability of the **s2idle** sleep state (Modern Standby) and fixes random "instant wake" issues by blocking spurious events.
 
 
 ### ⚠️ Important
