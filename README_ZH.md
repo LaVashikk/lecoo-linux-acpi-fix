@@ -167,17 +167,16 @@ module_path: boot():/acpi_override.cpio#{你的校验值}
 重启后，打开终端并执行：
 
 ```bash
-sudo dmesg | grep ACPI | grep override
+ls /sys/bus/acpi/devices/ | grep PTCH
 ```
 
-如果补丁加载成功，你应该能看到类似下方的输出：
+如果补丁加载成功，你应该能看到如下输出：
 
 ```text
-ACPI: Table Upgrade: override [DSDT-ALASKA-  A M I ]
-ACPI: DSDT 0x00000000969E3000 Physical table override, new table: 0x000000009B5A5000
+PTCH0001:00
 ```
 
-此时你可以尝试关机，测试关机修复是否能够正常工作。
+如果出现了上述输出（即内核成功创建了该设备的目录），则说明补丁已经被成功加载。此时你可以尝试关机，测试关机修复是否能够正常工作。
 
 ## 许可
 

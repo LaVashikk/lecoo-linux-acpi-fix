@@ -169,17 +169,16 @@ module_path: boot():/acpi_override.cpio#{YOUR HASH}
 After rebooting, open a terminal and run:
 
 ```bash
-sudo dmesg | grep ACPI | grep override
+ls /sys/bus/acpi/devices/ | grep PTCH
 ```
 
-You should see lines similar to:
+You should see the following output:
 
 ```text
-ACPI: Table Upgrade: override [DSDT-ALASKA-  A M I ]
-ACPI: DSDT 0x00000000969E3000 Physical table override, new table: 0x000000009B5A5000
+PTCH0001:00
 ```
 
-If these lines are present, the patch has been applied successfully. Try shutting down the laptop to test the fix.
+If this directory is present, the patch has been applied successfully by the kernel. Try shutting down the laptop to test the fix.
 
 ## License
 

@@ -160,15 +160,14 @@ module_path: boot():/acpi_override.cpio#{YOUR HASH}
 После перезагрузки откройте терминал и введите:
 
 ```bash
-sudo dmesg | grep ACPI | grep override
+ls /sys/bus/acpi/devices/ | grep PTCH
 ```
 
-Вы должны увидеть строкии типа:
+Вы должны увидеть следующий вывод:
+```text
+PTCH0001:00
 ```
-ACPI: Table Upgrade: override [DSDT-ALASKA-  A M I ]
-ACPI: DSDT 0x00000000969E3000 Physical table override, new table: 0x000000009B5A5000
-```
-Если строка есть — патч применился. Попробуйте выключить ноутбук.
+Если эта строка (директория) есть — патч успешно загружен и применен ядром. Попробуйте выключить ноутбук.
 
 ## Лицензия:
 ACPI tables are property of their respective owners. Modifications are provided for interoperability/repair purposes.

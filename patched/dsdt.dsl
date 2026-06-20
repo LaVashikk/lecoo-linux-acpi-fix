@@ -12116,5 +12116,13 @@ DefinitionBlock ("", "DSDT", 2, "ALASKA", "A M I ", 0x0107201A)
             CMSW ((Arg0 + 0x03), Local0)
         }
     }
-}
 
+    Scope (_SB)
+    {
+        Device (PTCH)
+        {
+            Name (_HID, "PTCH0001") // ACPI Patched Marker
+            Name (_STA, 0x0B)
+        }
+    }
+}
