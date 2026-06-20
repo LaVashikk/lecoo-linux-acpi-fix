@@ -214,19 +214,19 @@ DefinitionBlock ("", "SSDT", 2, "AMD", "CPMGPIO0", 0x00000001)
         {
             Name (BUF0, ResourceTemplate ()
             {
-                GpioInt (Edge, ActiveHigh, ExclusiveAndWake, PullDefault, 0x1388,
+                GpioInt (Edge, ActiveHigh, ExclusiveAndWake, PullDefault, 0x1388, // power button?
                     "\\_SB.GPIO", 0x00, ResourceConsumer, ,
                     )
                     {   // Pin list
                         0x0000
                     }
-                GpioInt (Level, ActiveHigh, ExclusiveAndWake, PullNone, 0x0000,
+                GpioInt (Level, ActiveHigh, Exclusive, PullNone, 0x0000,
                     "\\_SB.GPIO", 0x00, ResourceConsumer, ,
                     )
                     {   // Pin list
                         0x003D
                     }
-                GpioInt (Level, ActiveHigh, ExclusiveAndWake, PullNone, 0x0000,
+                GpioInt (Level, ActiveHigh, Exclusive, PullNone, 0x0000,
                     "\\_SB.GPIO", 0x00, ResourceConsumer, ,
                     )
                     {   // Pin list
@@ -335,6 +335,8 @@ DefinitionBlock ("", "SSDT", 2, "AMD", "CPMGPIO0", 0x00000001)
                     M460 ("    Notify (\\_SB.PCI0.GPP5.DEV0, 0x01)\n", Zero, Zero, Zero, Zero, Zero, Zero)
                     Notify (\_SB.PCI0.GPP5.DEV0, One) // Device Check
                 }
+
+                // AC adapter probably
                 Case (0x0B)
                 {
                     M000 (0x390B)
@@ -364,6 +366,8 @@ DefinitionBlock ("", "SSDT", 2, "AMD", "CPMGPIO0", 0x00000001)
                 {
                     M000 (0x3936)
                 }
+
+                // USB devices?
                 Case (0x3A)
                 {
                     M000 (0x393A)
@@ -376,6 +380,7 @@ DefinitionBlock ("", "SSDT", 2, "AMD", "CPMGPIO0", 0x00000001)
                     M460 ("    Notify (\\_SB.PCI0.GP17.XHC1, 0x02)\n", Zero, Zero, Zero, Zero, Zero, Zero)
                     Notify (\_SB.PCI0.GP17.XHC1, 0x02) // Device Wake
                 }
+
                 Case (0x3D)
                 {
                     M000 (0x393D)
