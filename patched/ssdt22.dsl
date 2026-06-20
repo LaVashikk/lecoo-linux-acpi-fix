@@ -65,6 +65,7 @@ DefinitionBlock ("", "SSDT", 2, "AMD", "CPMGPIO0", 0x00000001)
     External (_SB_.PCI0.SBRG.H_EC.BAT0, UnknownObj)
     External (_SB_.PCI0.SBRG.H_EC.OKEC, IntObj)
     External (_SB_.PWRB, DeviceObj)
+    External (\SLPF, IntObj)
     External (CMSR, IntObj)
     External (CMSW, MethodObj)    // Warning: Unknown method, guessing 3 arguments
     External (M000, MethodObj)    // 1 Arguments
@@ -277,6 +278,7 @@ DefinitionBlock ("", "SSDT", 2, "AMD", "CPMGPIO0", 0x00000001)
 
         Method (_EVT, 1, Serialized)  // _EVT: Event
         {
+            Debug = "DBG_S2I: just working, fine!"
             M460 ("  OEM-ASL-\\_SB.GPIO._EVT-Start Case %d\n", ToInteger (Arg0), Zero, Zero, Zero, Zero, Zero)
             Switch (ToInteger (Arg0))
             {
@@ -285,9 +287,9 @@ DefinitionBlock ("", "SSDT", 2, "AMD", "CPMGPIO0", 0x00000001)
                     M000 (0x3900)
                     If (\_SB.PCI0.SBRG.H_EC.B1PN)
                     {
-                        0x56 = CMSR /* External reference */
-                        Local1
-                        Local1 += 0x04
+                        Store (CMSR, Local1)
+                        Add (Local1, 0x04, Local1)
+
                         CMSW (0x56, Local1, M460 ("    Notify (\\_SB.PCI0.SBRG.H_EC.BAT0)\n", Zero, Zero, Zero, Zero, Zero, Zero))
                         \_SB.PCI0.SBRG.H_EC.B1PN = Zero
                         Notify (\_SB.PCI0.SBRG.H_EC.BAT0, 0x80) // Status Change
@@ -295,11 +297,20 @@ DefinitionBlock ("", "SSDT", 2, "AMD", "CPMGPIO0", 0x00000001)
                     }
                     Else
                     {
-                        0x56 = CMSR /* External reference */
-                        Local1
-                        Local1 += 0x02
-                        CMSW (0x56, Local1, M460 ("    Notify (\\_SB.PWRB, 0x80)\n", Zero, Zero, Zero, Zero, Zero, Zero))
-                        Notify (\_SB.PWRB, 0x80) // Status Change
+
+                        If (LEqual (\SLPF, Zero)) 
+                        {
+                            Debug = "*** DBG_S2I: not in sleep state, so do some job, whatever ***"
+                            Store (CMSR, Local1)
+                            Add (Local1, 0x02, Local1)
+                            CMSW (0x56, Local1, M460 ("    Notify (\\_SB.PWRB, 0x80)\n", Zero, Zero, Zero, Zero, Zero, Zero))
+                            Notify (\_SB.PWRB, 0x80) // Status Change
+                        }
+                        Else
+                        {
+                            // we are sleeping!
+                            Debug = "*** DBG_S2I: BLOCKED FAKE PWRB DURING SLEEP! ***"
+                        }
                     }
                 }
                 Case (0x02)
