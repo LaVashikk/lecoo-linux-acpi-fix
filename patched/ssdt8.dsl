@@ -23,8 +23,8 @@ DefinitionBlock ("", "SSDT", 1, "AMD", "WLAN", 0x00000001)
     External (_SB_.ALIB, MethodObj)    // 2 Arguments
     External (_SB_.PCI0.GPP6, DeviceObj)
     External (_SB_.PCI0.GPP6.WLAN, DeviceObj)
-    External (_SB_.PCI0.SBRG.EC0_.GPO3, FieldUnitObj)
-    External (_SB_.PCI0.SBRG.EC0_.GPOE, FieldUnitObj)
+    External (_SB_.PCI0.SBRG.H_EC.XXX3, FieldUnitObj)
+    External (_SB_.PCI0.SBRG.H_EC.XXX4, FieldUnitObj)
     External (M000, MethodObj)    // 1 Arguments
     External (M017, MethodObj)    // 6 Arguments
     External (M018, MethodObj)    // 7 Arguments
@@ -190,15 +190,15 @@ DefinitionBlock ("", "SSDT", 1, "AMD", "WLAN", 0x00000001)
         Method (P_ON, 0, NotSerialized)
         {
             M460 ("PLA-ASL-_SB.PCI0.GPP6.P_ON - start\n", Zero, Zero, Zero, Zero, Zero, Zero)
-            Local1 = \_SB.PCI0.SBRG.EC0.GPO3 /* External reference */
+            Local1 = \_SB.PCI0.SBRG.H_EC.XXX3 /* External reference */
             Local1 &= 0x20
             M460 ("PLA-ASL-_SB.PCI0.GPP6.P_ON.RstPin : %d\n", Local1, Zero, Zero, Zero, Zero, Zero)
             If ((Local1 != 0x20))
             {
                 M460 ("  PLA-ASL-_SB.PCI0.GPP6.P_ON.OnSeq \n", Zero, Zero, Zero, Zero, Zero, Zero)
-                Local2 = \_SB.PCI0.SBRG.EC0.GPO3 /* External reference */
+                Local2 = \_SB.PCI0.SBRG.H_EC.XXX3 /* External reference */
                 Local3 = (Local2 | 0x20)
-                \_SB.PCI0.SBRG.EC0.GPO3 = Local3
+                \_SB.PCI0.SBRG.H_EC.XXX3 = Local3
                 Sleep (One)
                 \_SB.ALIB (0x13, 0x12)
                 Sleep (One)
@@ -220,7 +220,7 @@ DefinitionBlock ("", "SSDT", 1, "AMD", "WLAN", 0x00000001)
         Method (P_OF, 0, NotSerialized)
         {
             M460 ("PLA-ASL-_SB.PCI0.GPP6.P_OF - start\n", Zero, Zero, Zero, Zero, Zero, Zero)
-            Local1 = \_SB.PCI0.SBRG.EC0.GPO3 /* External reference */
+            Local1 = \_SB.PCI0.SBRG.H_EC.XXX3 /* External reference */
             Local1 &= 0x20
             M460 ("  PLA-ASL-_SB.PCI0.GPP6.P_OF.RstPin: %d\n", Local1, Zero, Zero, Zero, Zero, Zero)
             If ((Local1 == 0x20))
@@ -231,9 +231,9 @@ DefinitionBlock ("", "SSDT", 1, "AMD", "WLAN", 0x00000001)
                 M018 (Zero, 0x02, 0x02, 0x70, Zero, 0x10, (Local2 & 0xEFFF))
                 \_SB.ALIB (0x12, 0x12)
                 M018 (Zero, 0x02, 0x02, 0x70, Zero, 0x10, Local2)
-                Local0 = \_SB.PCI0.SBRG.EC0.GPO3 /* External reference */
+                Local0 = \_SB.PCI0.SBRG.H_EC.XXX3 /* External reference */
                 Local1 = (Local0 & 0xDF)
-                \_SB.PCI0.SBRG.EC0.GPO3 = Local1
+                \_SB.PCI0.SBRG.H_EC.XXX3 = Local1
                 Sleep (One)
             }
 
